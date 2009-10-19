@@ -3,9 +3,15 @@ include $(CLEAR_VARS)
 
 commands_recovery_local_path := $(LOCAL_PATH)
 
-ifneq ($(TARGET_SIMULATOR),true)
+LOCAL_BUILD:=false
 ifeq ($(TARGET_ARCH),arm)
+LOCAL_BUILD:=true
+endif
+ifeq ($(TARGET_ARCH),mips)
+LOCAL_BUILD:=true
+endif
 
+ifeq ($(LOCAL_BUILD),true)
 LOCAL_SRC_FILES := \
 	recovery.c \
 	bootloader.c \
@@ -45,6 +51,5 @@ include $(commands_recovery_local_path)/edify/Android.mk
 include $(commands_recovery_local_path)/updater/Android.mk
 commands_recovery_local_path :=
 
-endif   # TARGET_ARCH == arm
-endif	# !TARGET_SIMULATOR
+endif   # LOCAL_BUILD=true
 
