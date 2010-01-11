@@ -1,9 +1,17 @@
 ifneq ($(TARGET_SIMULATOR),true)
-ifeq ($(TARGET_ARCH),arm)
 
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
+LOCAL_BUILD_MTDUTILS:=false
+ifeq ($(TARGET_ARCH),arm)
+LOCAL_BUILD_MTDUTILS:=true
+endif
+ifeq ($(TARGET_ARCH),mips)
+LOCAL_BUILD_MTDUTILS:=true
+endif
+
+ifeq ($(LOCAL_BUILD_MTDUTILS),true)
 LOCAL_SRC_FILES := \
 	mtdutils.c \
 	mounts.c
@@ -20,5 +28,5 @@ LOCAL_STATIC_LIBRARIES := libmtdutils
 LOCAL_SHARED_LIBRARIES := libcutils libc
 include $(BUILD_EXECUTABLE)
 
-endif	# TARGET_ARCH == arm
+endif	# LOCAL_BUILD_MTDUTILS
 endif	# !TARGET_SIMULATOR
