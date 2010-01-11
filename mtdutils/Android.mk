@@ -1,5 +1,5 @@
 ifneq ($(TARGET_SIMULATOR),true)
-ifeq ($(TARGET_ARCH),arm)
+ifeq ($(TARGET_ARCH),mips)
 
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
