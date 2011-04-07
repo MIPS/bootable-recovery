@@ -1,8 +1,18 @@
 ifneq ($(TARGET_SIMULATOR),true)
-ifeq ($(TARGET_ARCH),arm)
 
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
+
+LOCAL_BUILD_RECOVERY:=false
+
+ifeq ($(TARGET_ARCH),mips)
+LOCAL_BUILD_RECOVERY:=true
+endif
+ifeq ($(TARGET_ARCH),arm)
+LOCAL_BUILD_RECOVERY:=true
+endif
+
+ifeq ($(LOCAL_BUILD_RECOVERY),true)
 
 commands_recovery_local_path := $(LOCAL_PATH)
 
@@ -69,6 +79,6 @@ include $(commands_recovery_local_path)/updater/Android.mk
 include $(commands_recovery_local_path)/applypatch/Android.mk
 commands_recovery_local_path :=
 
-endif   # TARGET_ARCH == arm
+endif    # LOCAL_BUILD_RECOVERY
 endif    # !TARGET_SIMULATOR
 
