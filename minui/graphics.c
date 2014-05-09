@@ -148,9 +148,11 @@ static int get_framebuffer(GGLSurface *fb)
     fb++;
 
     /* check if we can use double buffering */
+    printf("vi.yres:%d fi.line_length:%d fi.smem_len:%d\n", vi.yres, fi.line_length, fi.smem_len);
     if (vi.yres * fi.line_length * 2 > fi.smem_len)
         return fd;
 
+    printf("enable double buffering\n");
     double_buffering = 1;
 
     fb->version = sizeof(*fb);
@@ -195,6 +197,10 @@ void gr_flip(void)
     /* copy data from the in-memory surface to the buffer we're about
      * to make active. */
     memcpy(gr_framebuffer[gr_active_fb].data, gr_mem_surface.data,
+           fi.line_length * vi.yres);
+
+    /* HACK: Update active buffer too.... */
+    memcpy(gr_framebuffer[gr_active_fb^1].data, gr_mem_surface.data,
            fi.line_length * vi.yres);
 
     /* inform the display driver */
