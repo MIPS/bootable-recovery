@@ -139,7 +139,7 @@ int flash(nandContext *part, int image)
 }
 
 /* Read an image file and write it to a flash partition. */
-int do_func(char *ptname, char *filename)
+int do_func(char *ptname, char *filename, int ignore_check)
 {
 	int ret = 0;
 	int fd_img = -1;
@@ -156,7 +156,7 @@ int do_func(char *ptname, char *filename)
 	printf("nand_flash_image: file offset = 0, length = %lu\n", lseek(fd_img, 0, SEEK_END));
 
 	/* If the first part of the file matches the partition, skip writing */
-	if (check(ctx_part, fd_img) == NOT_NEED_FLASH)
+	if ( !ignore_check && (check(ctx_part, fd_img) == NOT_NEED_FLASH))
 		printf("image is the same, need not flashing %s\n", ptname);
 	else {
 		printf("flashing %s from %s\n", ptname, filename);
@@ -173,16 +173,18 @@ int main(int argc, char **argv)
 {
 //    freopen("/dev/console", "a", stdout); setbuf(stdout, NULL);
  //   freopen("/dev/console", "a", stderr); setbuf(stderr, NULL);
-
+	int ignore_check = 0;
 	printf("Start nand_flash_image!\n");
 
-	if (argc != 3) {
-		fprintf(stderr, "usage: %s partition file.img\n", argv[0]);
+	if (argc < 3) {
+		fprintf(stderr, "usage: %s [-i] partition file.img\n", argv[0]);
 		return 2;
 	}
-
-	if(do_func(argv[1], argv[2]))
-		return do_func(argv[1], argv[2]);
+	if (strncmp(argv[1], "-i", 3) == 0) {
+		ignore_check = 1;
+	}
+	if(do_func(argv[1+ignore_check], argv[2+ignore_check], ignore_check))
+		return do_func(argv[1+ignore_check], argv[2+ignore_check], ignore_check);
 
 	return 0;
 }
